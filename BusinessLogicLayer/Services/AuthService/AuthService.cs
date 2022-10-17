@@ -1,30 +1,26 @@
-﻿using BusinessLogicLayer.Interfaces;
-using BusinessLogicLayer.Models;
+﻿using BusinessLogicLayer.Models;
 using DataAccessLayer.Entities;
-using DataAccessLayer.Interfaces;
+using DataAccessLayer.Repositories.UserRepository;
+using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using MimeKit;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace BusinessLogicLayer
+namespace BusinessLogicLayer.AuthService
 {
     public class AuthService : IAuthService
     {
-        private readonly IAuthRepository _repository;
+        private readonly IUserRepository _userRepository;
         private readonly IConfiguration _configuration;
 
-        public AuthService(IAuthRepository repository, IConfiguration configuration)
+        public AuthService(IUserRepository _userRepository, IConfiguration configuration)
         {
-            _repository = repository;
+            this._userRepository = _userRepository;
             _configuration = configuration;
-        }
-
-        public bool CheckUserIsExist(string email)
-        {
-            return _repository.CheckUserIsExist(email);
         }
 
         public void RegisterUser(UserRegisterRequest userRegister)
@@ -42,16 +38,16 @@ namespace BusinessLogicLayer
                 VerificationToken = CreateRandomToken(),
             };
 
-            _repository.CreateUser(userEntity);
+            _userRepository.CreateUser(userEntity);
         }
 
         public bool VerifyLoginData(string email, string password, out string token)
         {
-            UserEntity? userEntity = _repository.FindUserByEmail(email);
-            token = String.Empty;
+            UserEntity? userEntity = _userRepository.FindUserByEmail(email);
+            token = string.Empty;
             bool isValid = false;
 
-            if(VerifyPasswordHash(password, userEntity.PasswordHash, userEntity.PasswordSalt))
+            if (VerifyPasswordHash(password, userEntity.PasswordHash, userEntity.PasswordSalt))
             {
                 token = CreateToken(userEntity);
                 isValid = true;
@@ -62,14 +58,14 @@ namespace BusinessLogicLayer
 
         public bool VerifyEmail(string token)
         {
-            UserEntity? userEntity = _repository.FindUserByToken(token);
+            UserEntity? userEntity = _userRepository.FindUserByToken(token);
 
-            if(userEntity == null)
+            if (userEntity == null)
             {
                 return false;
             }
 
-            _repository.UpdateUserVerifyAt(userEntity);
+            _userRepository.UpdateUserVerifyAt(userEntity);
 
             return true;
         }

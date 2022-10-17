@@ -1,8 +1,7 @@
-﻿using BusinessLogicLayer;
-using BusinessLogicLayer.Interfaces;
+﻿using BusinessLogicLayer.EmailService;
 using DataAccessLayer;
 using DataAccessLayer.Entities.Context;
-using DataAccessLayer.Interfaces;
+using DataAccessLayer.Repositories.UserRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -39,7 +38,10 @@ builder.Services.AddSwaggerGen();
 
 // Dependency injections
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

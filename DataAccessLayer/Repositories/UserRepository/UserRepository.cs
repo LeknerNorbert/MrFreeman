@@ -1,14 +1,13 @@
 ﻿using DataAccessLayer.Entities;
 using DataAccessLayer.Entities.Context;
-using DataAccessLayer.Interfaces;
 
-namespace DataAccessLayer
+namespace DataAccessLayer.Repositories.UserRepository
 {
-    public class AuthRepository : IAuthRepository
+    public class UserRepository : IUserRepository
     {
         private readonly ApplicationDbContext _db;
 
-        public AuthRepository(ApplicationDbContext db)
+        public UserRepository(ApplicationDbContext db)
         {
             _db = db;
         }

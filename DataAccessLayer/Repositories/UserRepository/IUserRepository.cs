@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.Interfaces
+namespace DataAccessLayer.Repositories.UserRepository
 {
-    public interface IAuthRepository
+    public interface IUserRepository
     {
         public bool CheckUserIsExist(string email);
         public UserEntity? FindUserByEmail(string email);
