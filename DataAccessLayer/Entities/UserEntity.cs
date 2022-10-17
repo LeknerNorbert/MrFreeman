@@ -24,6 +24,6 @@ namespace DataAccessLayer.Entities
         public DateTime VerifiedAt { get; set; }
         public string? PasswordResetToken {get; set; }
         public DateTime? PasswordResetExpires { get; set; }
-        public DateTime? RegisterDate { get; set; }
+        public DateTime? RegisterDate { get; set; } = DateTime.Now;
     }
 }

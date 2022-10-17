@@ -24,26 +24,28 @@ namespace BusinessLogicLayer
 
         public bool CheckUserIsExist(string email)
         {
-            return _repository.FindUserByEmail(email) != null;
+            return _repository.CheckUserIsExist(email);
         }
 
-        public void CreateUser(UserModel userModel)
+        public void RegisterUser(UserRegisterRequest userRegister)
         {
-            CreatePasswordHash(userModel.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            CreatePasswordHash(userRegister.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
             UserEntity userEntity = new()
             {
-                Email = userModel.Email,
-                Firstname = userModel.Firstname,
-                Lastname = userModel.Lastname,
+                Email = userRegister.Email,
+                Firstname = userRegister.Firstname,
+                Lastname = userRegister.Lastname,
+                PhoneNumber = userRegister.PhoneNumber,
                 PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt
+                PasswordSalt = passwordSalt,
+                VerificationToken = CreateRandomToken(),
             };
 
             _repository.CreateUser(userEntity);
         }
 
-        public bool VerifyUser(string email, string password, out string token)
+        public bool VerifyLoginData(string email, string password, out string token)
         {
             UserEntity? userEntity = _repository.FindUserByEmail(email);
             token = String.Empty;
@@ -56,6 +58,20 @@ namespace BusinessLogicLayer
             }
 
             return isValid;
+        }
+
+        public bool VerifyEmail(string token)
+        {
+            UserEntity? userEntity = _repository.FindUserByToken(token);
+
+            if(userEntity == null)
+            {
+                return false;
+            }
+
+            _repository.UpdateUserVerifyAt(userEntity);
+
+            return true;
         }
 
         private string CreateToken(UserEntity userEntity)
@@ -96,6 +112,11 @@ namespace BusinessLogicLayer
             var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
 
             return computedHash.SequenceEqual(passwordHash);
+        }
+
+        private string CreateRandomToken()
+        {
+            return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
         }
     }
 }

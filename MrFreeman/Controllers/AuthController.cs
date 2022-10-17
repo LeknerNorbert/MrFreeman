@@ -1,7 +1,7 @@
 ﻿using BusinessLogicLayer.Interfaces;
 using BusinessLogicLayer.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MrFreeman.Filters;
 
 namespace MrFreeman.Controllers
 {
@@ -19,21 +19,17 @@ namespace MrFreeman.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Register(UserModel userModel) 
+        [ValidateModel]
+        public IActionResult Register(UserRegisterRequest userRegister) 
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest("Invalid model state.");
-            }
-
-            if (_auth.CheckUserIsExist(userModel.Email))
+            if (_auth.CheckUserIsExist(userRegister.Email))
             {
                 return BadRequest("There is already a user with this email.");
             }
 
             try
             {
-                _auth.CreateUser(userModel);
+                _auth.RegisterUser(userRegister);
             }
             catch (Exception)
             {
@@ -55,7 +51,7 @@ namespace MrFreeman.Controllers
 
             // Megnézi, hogy az email meg lett-e erősítve
 
-            if (_auth.VerifyUser(email, password, out string token))
+            if (_auth.VerifyLoginData(email, password, out string token))
             {
                 return Ok(token);
             }
@@ -65,6 +61,19 @@ namespace MrFreeman.Controllers
             }
         }
 
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult VerifyEmail(string token)
+        {
+            bool isVerified = _auth.VerifyEmail(token);
 
+            if (!isVerified)
+            {
+                return BadRequest("Invalid confirmation token.");
+            }
+
+            return Ok("Successful email confirmation.");
+        }
     }
 }

@@ -11,7 +11,8 @@ namespace BusinessLogicLayer.Interfaces
     public interface IAuthService
     {
         public bool CheckUserIsExist(string email);
-        public void CreateUser(UserModel userModel);
-        public bool VerifyUser(string email, string password, out string token);
+        public void RegisterUser(UserRegisterRequest userModel);
+        public bool VerifyLoginData(string email, string password, out string token);
+        public bool VerifyEmail(string token);
     }
 }
