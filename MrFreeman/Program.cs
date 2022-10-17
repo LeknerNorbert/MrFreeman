@@ -1,5 +1,6 @@
-﻿using BusinessLogicLayer.EmailService;
-using DataAccessLayer;
+﻿using BusinessLogicLayer.AuthService;
+using BusinessLogicLayer.EmailService;
+using BusinessLogicLayer.UserService;
 using DataAccessLayer.Entities.Context;
 using DataAccessLayer.Repositories.UserRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

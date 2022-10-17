@@ -87,7 +87,7 @@ namespace MrFreeman.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult SendVerifyEmail(string email)
         {
-            if(_userService.CheckUserIsExist(email))
+            if(!_userService.CheckUserIsExist(email))
             {
                 return BadRequest("There is no user with this email.");
             }
@@ -107,14 +107,6 @@ namespace MrFreeman.Controllers
             }
 
             return Ok("Verify email sent.");
-        }
-
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult SendPasswordResetEmail()
-        {
-            return Ok();
         }
     }
 }

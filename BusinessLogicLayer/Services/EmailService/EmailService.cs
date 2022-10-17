@@ -10,10 +10,10 @@ namespace BusinessLogicLayer.EmailService
 {
     public class EmailService : IEmailService
     {
-        public void SendVerifyEmail(string email, string subject, string body)
+        public void SendEmail(string email, string subject, string body)
         {
             var message = new MimeMessage();
-            message.From.Add(MailboxAddress.Parse("esteban.rohan@ethereal.email"));
+            message.From.Add(MailboxAddress.Parse("gerald71@ethereal.email"));
             message.To.Add(MailboxAddress.Parse(email));
             message.Subject = subject;
             message.Body = new TextPart(MimeKit.Text.TextFormat.Html)
@@ -21,7 +21,7 @@ namespace BusinessLogicLayer.EmailService
 
             using var smtp = new SmtpClient();
             smtp.Connect("smtp.ethereal.email", 587, MailKit.Security.SecureSocketOptions.StartTls);
-            smtp.Authenticate("esteban.rohan@ethereal.email", "kCj5NAhhnhVfAWAVsU");
+            smtp.Authenticate("gerald71@ethereal.email", "PAGkUf8jYm4akaq4FP");
             smtp.Send(message);
             smtp.Disconnect(true);
         }
